@@ -1,6 +1,7 @@
 from flask import Flask, request
 import requests
 import json
+import os
 app = Flask(__name__)
 
 FB_API_URL = 'https://graph.facebook.com/v2.6/me/messages'
@@ -66,7 +67,7 @@ def listen():
         return verify_webhook(request)
 
     if request.method == 'POST':
-        payload = request.json
+        payload = request.get_json()
         event = payload['entry'][0]['messaging']
         for x in event:
             if x.get('message'):
