@@ -35,7 +35,7 @@ def send_message(recipient_id, text):
 
 def get_bot_response(message):
     duLieu = requests.post('https://sim.vuiz.net/post_sim.php', data={'hoi':message,'lang':'vn'})
-    return json.dumps(duLieu)['message']
+    return json.loads(duLieu)['message']
 
 
 def verify_webhook(req):
