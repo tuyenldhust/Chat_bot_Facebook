@@ -1,5 +1,6 @@
 from flask import Flask, request
 import requests
+import json
 
 app = Flask(__name__)
 
@@ -34,7 +35,7 @@ def send_message(recipient_id, text):
 
 def get_bot_response(message):
     duLieu = requests.post('https://sim.vuiz.net/post_sim.php', data={'hoi':message,'lang':'vn'})
-    return type(duLieu)
+    return json.dumps(duLieu)['message']
 
 
 def verify_webhook(req):
