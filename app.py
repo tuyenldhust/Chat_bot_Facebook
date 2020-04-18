@@ -3,8 +3,8 @@ import requests
 app = Flask(__name__)
 
 FB_API_URL = 'https://graph.facebook.com/v2.6/me/messages'
-VERIFY_TOKEN = ''# <paste your verify token here>
-PAGE_ACCESS_TOKEN = ''# paste your page access token here>"
+VERIFY_TOKEN = 'Simsimi'# <paste your verify token here>
+PAGE_ACCESS_TOKEN = 'EAACJpmQBpRwBAPOThKTZApd5Ly6TuTOCr50wgihAEEZBccs4nCXQyco2QLxuiEWRq2tooHDr3ToRbOeDBgm9V6jZA1KYNqfJvLczuzTVdwjLh2gv4GcvTCwVR3z6LEjsqyWahz5JrmtZCic3rsxag5vbvIpWsvljhWi3ogccx5dKt4LHJX3W'# paste your page access token here>"
 
 def send_message(recipient_id, text):
     """Send a response to Facebook"""
@@ -73,5 +73,6 @@ def listen():
                 respond(sender_id, text)
 
         return "ok"
+
 if __name__ == "__main__":
     app.run()
