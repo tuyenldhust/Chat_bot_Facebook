@@ -25,9 +25,9 @@ def respond(sender, message):
     send_message(sender, response)
 
 
-def is_user_message(message):
-    """Check if the message is a message from the user"""
-    return (message.get('message') and message['message'].get('text'))
+# def is_user_message(message):
+#     """Check if the message is a message from the user"""
+#     return (message.get('message') and message['message'].get('text'))
 
 def send_message(recipient_id, text):
     """Send a response to Facebook"""
@@ -67,7 +67,7 @@ def listen():
         payload = request.json
         event = payload['entry'][0]['messaging']
         for x in event:
-            if is_user_message(x):
+            if x.get('message'):
                 text = x['message']['text']
                 sender_id = x['sender']['id']
                 respond(sender_id, text)
