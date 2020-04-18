@@ -66,11 +66,12 @@ def listen():
  
     if request.method == 'POST':
         payload = request.json
-        if payload['entry'][0]['messaging'] in payload['entry'][0]:
+        if payload['entry'][0].get('messaging'):
             for x in payload['entry'][0]['messaging']:
                 if is_user_message(x):
                     text = x['message']['text']
                     sender_id = x['sender']['id']
                     respond(sender_id, text)
             return "ok"
-        return "failed"
+        else:
+            return "failed"
