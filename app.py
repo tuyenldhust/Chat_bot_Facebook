@@ -1,5 +1,6 @@
 from flask import Flask, request
 import requests
+import json
 app = Flask(__name__)
 
 FB_API_URL = 'https://graph.facebook.com/v2.6/me/messages'
@@ -31,15 +32,15 @@ def respond(sender, message):
 
 def send_message(recipient_id, text):
     """Send a response to Facebook"""
-    payload = {
+    payload = json.dumps({
         'message': {
             'text': text
         },
         'recipient': {
             'id': recipient_id
         }
-    }
-
+    })
+    
     auth = {
         'access_token': PAGE_ACCESS_TOKEN
     }
@@ -47,6 +48,7 @@ def send_message(recipient_id, text):
     headers = {
         "Content-Type": "application/json"
     }
+    
     response = requests.post(
         FB_API_URL,
         params=auth,
