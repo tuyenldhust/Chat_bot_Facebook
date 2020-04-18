@@ -3,7 +3,7 @@ from flask import Flask, request
 from pymessenger.bot import Bot
 
 app = Flask(__name__)       # Initializing our Flask application
-ACCESS_TOKEN = 'EAACJpmQBpRwBAOBIGYavhI8uFbKuxBZBTX4zZCQCv6G86pDhQkECOyNePA42jpw4ReTzPBseWZA6Te3JVe4GnQxN0t1RuxiksTdmxu90ahU1L9Lff3WzsNMSJ4xaJFoZA9qEr0VO5753k4jvQo6d4MGx1ZAp2I4i6ZBBeEEO8ZA67bId5GRJKgU'
+ACCESS_TOKEN = 'EAACJpmQBpRwBAKHKx4zvZB2rZCU2i5guInFef3lc0QlaxkxKRLspu3MpCXFIDfAufSlPWjuhymUT0te6YdrvlQnZCuLZBOqwF0tJcRBhmvitlZBLJhnZCuLcvZCYvcGC9jxOEfbWfStvqE1adi1gZBTTX938R1OVUZAwLoNfouzrFxfC9s2A0ZAFMh'
 VERIFY_TOKEN = 'Simsimi'
 bot = Bot(ACCESS_TOKEN)
 
