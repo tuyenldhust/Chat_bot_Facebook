@@ -60,17 +60,17 @@ def is_user_message(message):
 @app.route("/", methods=['GET', 'POST'])
 def listen():
     """This is the main function flask uses to 
-    listen at the `/webhook` endpoint"""
+    listen at the `/` endpoint"""
     if request.method == 'GET':
         return verify_webhook(request)
  
     if request.method == 'POST':
         payload = request.json
-        event = payload['entry'][0]['messaging']
-        for x in event:
-            if is_user_message(x):
-                text = x['message']['text']
-                sender_id = x['sender']['id']
-                respond(sender_id, text)
- 
-        return "ok"
+        if payload['entry'][0]['messaging'] in payload['entry'][0]:
+            for x in payload['entry'][0]['messaging']:
+                if is_user_message(x):
+                    text = x['message']['text']
+                    sender_id = x['sender']['id']
+                    respond(sender_id, text)
+            return "ok"
+        return "failed"
