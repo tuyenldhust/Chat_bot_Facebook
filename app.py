@@ -1,80 +1,94 @@
-from flask import Flask, request
-import requests
-import json
 import os
+import sys
+import json
+from datetime import datetime
+
+import requests
+from flask import Flask, request
+
 app = Flask(__name__)
 
-FB_API_URL = 'https://graph.facebook.com/v2.6/me/messages'
-VERIFY_TOKEN = 'Simsimi'# <paste your verify token here>
-PAGE_ACCESS_TOKEN = 'EAACJpmQBpRwBANaZBbCf1TMcNuLE7jC3LYT0ZCKCjVH1b5WradOiKHOJSrzZALDaOUyqFZBWC6SrZBnTuq19lGUYZB3GHKZB3VdSDZAXYOGWZChO3tmNA2g9wIo26D9X4J8dHqpz05PQTXDtMxu8Jf3fxsKiZAQrruYmcaGHuhXgIYl6mte2wCD0sh'# paste your page access token here>"
 
-def get_bot_response():
-    """This is just a dummy function, returning a variation of what
-    the user said. Replace this function with one connected to chatbot."""
-    return "Hello"
+@app.route('/', methods=['GET'])
+def verify():
+    # when the endpoint is registered as a webhook, it must echo back
+    # the 'hub.challenge' value it receives in the query arguments
+    if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
+        if not request.args.get("hub.verify_token") == "Simsimi":
+            return "Verification token mismatch", 403
+        return request.args["hub.challenge"], 200
 
-
-def verify_webhook(req):
-    if req.args.get("hub.verify_token") == VERIFY_TOKEN:
-        return req.args.get("hub.challenge")
-    else:
-        return "incorrect"
-
-def respond(sender, message):
-    """Formulate a response to the user and
-    pass it on to a function that sends it."""
-    response = get_bot_response()
-    send_message(sender, response)
+    return "Hello world", 200
 
 
-# def is_user_message(message):
-#     """Check if the message is a message from the user"""
-#     return (message.get('message') and message['message'].get('text'))
+@app.route('/', methods=['POST'])
+def webhook():
 
-def send_message(recipient_id, text):
-    """Send a response to Facebook"""
-    payload = json.dumps({
-        'message': {
-            'text': text
-        },
-        'recipient': {
-            'id': recipient_id
-        }
-    })
-    
-    auth = {
-        'access_token': PAGE_ACCESS_TOKEN
+    # endpoint for processing incoming messaging events
+
+    data = request.get_json()
+    log(data)  # you may not want to log every incoming message in production, but it's good for testing
+
+    if data["object"] == "page":
+
+        for entry in data["entry"]:
+            for messaging_event in entry["messaging"]:
+
+                if messaging_event.get("message"):  # someone sent us a message
+
+                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
+                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+                    message_text = messaging_event["message"]["text"]  # the message's text
+
+                    send_message(sender_id, "roger that!")
+
+                if messaging_event.get("delivery"):  # delivery confirmation
+                    pass
+
+                if messaging_event.get("optin"):  # optin confirmation
+                    pass
+
+                if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
+                    pass
+
+    return "ok", 200
+
+
+def send_message(recipient_id, message_text):
+
+    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
+
+    params = {
+        "access_token": "EAACJpmQBpRwBAKLDxJPa3TkuRVJkilaaGU8XYroyMp2vzVNOODvpdZA2MvNVdGymMdiuAaXxTuBCqZA6yK4DTseJsxPRMFUOc6cnK9SWGgDteysj97VDrLKk3mPgxE7rBQHjQB1cpQK6UarrjUQgWpxcoqqg8YNW3aWuZA7ZCYsUkZAZCZC0dFm"
     }
-    
     headers = {
         "Content-Type": "application/json"
     }
-    
-    response = requests.post(
-        FB_API_URL,
-        params=auth,
-        headers=headers,
-        json=payload
-    )
-    
-    return response.json()
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "text": message_text
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
 
-@app.route("/webhook")
-def listen():
-    """This is the main function flask uses to 
-    listen at the `/webhook` endpoint"""
-    if request.method == 'GET':
-        return verify_webhook(request)
 
-    if request.method == 'POST':
-        payload = request.get_json()
-        event = payload['entry'][0]['messaging']
-        for x in event:
-            if x.get('message'):
-                text = x['message']['text']
-                sender_id = x['sender']['id']
-                respond(sender_id, text)
-        return "ok"
+def log(msg, *args, **kwargs):  # simple wrapper for logging to stdout on heroku
+    try:
+        if type(msg) is dict:
+            msg = json.dumps(msg)
+        else:
+            msg = unicode(msg).format(*args, **kwargs)
+        print("{}: {}".format(datetime.now(), msg))
+    except UnicodeEncodeError:
+        pass  # squash logging errors in case of non-ascii text
+    sys.stdout.flush()
 
-if __name__ == "__main__":
-    app.run()
+
+if __name__ == '__main__':
+    app.run(debug=True)
