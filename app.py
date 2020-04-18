@@ -71,7 +71,6 @@ def listen():
                 text = x['message']['text']
                 sender_id = x['sender']['id']
                 respond(sender_id, text)
-
         return "ok"
 
 if __name__ == "__main__":
