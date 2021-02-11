@@ -5,7 +5,7 @@ app = Flask(__name__)
  
 FB_API_URL = 'https://graph.facebook.com/v2.6/me/messages'
 VERIFY_TOKEN = 'Simsimi'# <paste your verify token here>
-PAGE_ACCESS_TOKEN = 'EAACJpmQBpRwBACZC2kHfDTQKNMJNG4nZBG5YceSI2jYhhITkZAEmprDJF5yRNXwoAu9r2QgM7UhxZAVX1EewvvkPkQpiwLgiq9AeQt8JMczCLEjWtRJsUGAoOc5qy8pHStdD5vnIxwAwDp1pg9lIoN0W4kUIxWDOXPckSeGp17tfxJD4tVe8'# paste your page access token here>"
+PAGE_ACCESS_TOKEN = 'EAAA'# paste your page access token here>"
  
 def send_message(recipient_id, text):
     """Send a response to Facebook"""
